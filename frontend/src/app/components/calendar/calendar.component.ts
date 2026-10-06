@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RtoService } from '../../services/rto.service';
 import { MonthlyData, CalendarDay, RtoStats, YtdData } from '../../models/rto.models';
+import { AdSlotComponent, AD_SLOTS, isAdSlotConfigured } from '../ad-slot/ad-slot.component';
 
 const MONTH_NAMES = [
   'January','February','March','April','May','June',
@@ -26,7 +27,7 @@ function appToday(): Date {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdSlotComponent],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
@@ -54,6 +55,8 @@ export class CalendarComponent implements OnInit {
   holidayNameDraft = '';
 
   years: number[] = [];
+  readonly adSlot = AD_SLOTS.dashboardBottom;
+  readonly showAd = isAdSlotConfigured(this.adSlot);
   monthNames = MONTH_NAMES;
 
   ngOnInit(): void {

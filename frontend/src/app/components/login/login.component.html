@@ -59,14 +59,8 @@
   </div>
 
   <!-- AdSense sidebar — desktop: right column | mobile: below card -->
-  <!-- Replace data-ad-slot with your ad slot ID from adsense.google.com  -->
-  <aside class="login-ad-sidebar">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-4616923792569310"
-         data-ad-slot="YOUR_AD_SLOT_ID"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
+  <aside class="login-ad-sidebar" *ngIf="showAd">
+    <app-ad-slot [slot]="adSlot" format="rectangle" [minHeight]="250"></app-ad-slot>
   </aside>
 
   </div><!-- /.login-layout -->

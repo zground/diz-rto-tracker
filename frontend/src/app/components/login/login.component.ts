@@ -1,17 +1,20 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { AdSlotComponent, AD_SLOTS, isAdSlotConfigured } from '../ad-slot/ad-slot.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, AdSlotComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements AfterViewInit {
+export class LoginComponent {
+  readonly adSlot = AD_SLOTS.loginSidebar;
+  readonly showAd = isAdSlotConfigured(this.adSlot);
   employeeNo = '';
   password   = '';
   error      = '';
@@ -19,14 +22,6 @@ export class LoginComponent implements AfterViewInit {
   showPass   = false;
 
   constructor(private auth: AuthService, private router: Router) {}
-
-  ngAfterViewInit(): void {
-    try {
-      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-    } catch (e) {
-      console.warn('AdSense initialization failed', e);
-    }
-  }
 
   submit(): void {
     this.error = '';
