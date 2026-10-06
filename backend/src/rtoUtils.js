@@ -11,6 +11,7 @@
  */
 
 const RTO_DAYS = new Set([2, 3, 4]); // Tue, Wed, Thu (0=Sun)
+const APP_TIMEZONE = process.env.APP_TIMEZONE || 'Asia/Manila';
 
 function isRtoDay(date) {
   return RTO_DAYS.has(date.getDay());
@@ -26,6 +27,16 @@ function toDateString(date) {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+/**
+ * Today's date as YYYY-MM-DD in APP_TIMEZONE, independent of the server's TZ
+ * (hosted servers usually run UTC, which is still "yesterday" before 08:00 PHT).
+ */
+function todayString() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: APP_TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
 }
 
 /**
@@ -64,4 +75,4 @@ function calculateRtoStats(year, month, inOfficeDates, holidayDates, approvedAbs
   return { expectedDays, actualDays, percentage, approvedAbsences: approvedAbsenceDates.length };
 }
 
-module.exports = { isRtoDay, isWeekday, toDateString, calculateRtoStats };
+module.exports = { isRtoDay, isWeekday, toDateString, todayString, calculateRtoStats };

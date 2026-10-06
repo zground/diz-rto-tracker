@@ -1,4 +1,4 @@
- # RTO Tracker &nbsp;![version](https://img.shields.io/badge/version-5.1.0-blue)
+ # RTO Tracker &nbsp;![version](https://img.shields.io/badge/version-5.2.0-blue)
 
 Personal return-to-office compliance tracker. Logs daily attendance against company RTO policy (Tue/Wed/Thu requirement) and gives a monthly compliance percentage at a glance.
 

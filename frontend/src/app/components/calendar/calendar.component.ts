@@ -3,21 +3,40 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RtoService } from '../../services/rto.service';
 import { MonthlyData, CalendarDay, RtoStats, YtdData } from '../../models/rto.models';
+import { AdSlotComponent, AD_SLOTS, isAdSlotConfigured } from '../ad-slot/ad-slot.component';
 
 const MONTH_NAMES = [
   'January','February','March','April','May','June',
   'July','August','September','October','November','December'
 ];
 
+const APP_TIMEZONE = 'Asia/Manila';
+
+/**
+ * Today's calendar date in APP_TIMEZONE, as a local-noon Date so that
+ * getFullYear/getMonth/getDate/getDay reflect the Manila date regardless of
+ * the browser's own timezone.
+ */
+function appToday(): Date {
+  const [y, m, d] = new Intl.DateTimeFormat('en-CA', {
+    timeZone: APP_TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date()).split('-').map(Number);
+  return new Date(y, m - 1, d, 12);
+}
+
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdSlotComponent],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
 export class CalendarComponent implements OnInit {
-  today = new Date();
+  // Re-evaluated on access so a tab left open past midnight rolls over.
+  get today(): Date {
+    return appToday();
+  }
+
   selectedYear: number = this.today.getFullYear();
   selectedMonth: number = this.today.getMonth() + 1; // 1-based
 
@@ -36,6 +55,8 @@ export class CalendarComponent implements OnInit {
   holidayNameDraft = '';
 
   years: number[] = [];
+  readonly adSlot = AD_SLOTS.dashboardBottom;
+  readonly showAd = isAdSlotConfigured(this.adSlot);
   monthNames = MONTH_NAMES;
 
   ngOnInit(): void {
@@ -152,7 +173,7 @@ export class CalendarComponent implements OnInit {
     this.checkingIn = true;
     this.successMessage = '';
     this.errorMessage = '';
-    this.rtoService.checkIn(undefined, 'IN_OFFICE').subscribe({
+    this.rtoService.checkIn(this.todayStr, 'IN_OFFICE').subscribe({
       next: () => {
         this.successMessage = `✅ Check-in recorded for ${this.formatDisplayDate(this.today)}!`;
         this.checkingIn = false;
@@ -171,7 +192,7 @@ export class CalendarComponent implements OnInit {
     this.loggingLeave = true;
     this.successMessage = '';
     this.errorMessage = '';
-    this.rtoService.checkIn(undefined, 'APPROVED_ABSENCE').subscribe({
+    this.rtoService.checkIn(this.todayStr, 'APPROVED_ABSENCE').subscribe({
       next: () => {
         this.successMessage = `🏖 Approved leave logged for ${this.formatDisplayDate(this.today)}!`;
         this.loggingLeave = false;
@@ -405,10 +426,13 @@ export class CalendarComponent implements OnInit {
     };
   }
 
+  // Dates here are local-noon calendar dates (grid days and appToday()), so
+  // local getters are correct. Using UTC getters shifts Manila to the
+  // previous day before 08:00.
   private formatDate(date: Date): string {
-    const y = date.getUTCFullYear();
-    const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const d = String(date.getUTCDate()).padStart(2, '0');
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
   }
 
@@ -417,7 +441,6 @@ export class CalendarComponent implements OnInit {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
-      timeZone: 'Asia/Manila',
     });
   }
 }

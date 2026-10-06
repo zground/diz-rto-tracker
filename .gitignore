@@ -11,6 +11,12 @@ frontend/.angular/
 .env.*
 !.env.example
 
+# Prod DB dumps (real user data)
+db-backups/
+
+# Local AI tooling (Continue + Dizweb Fabriq pack install, machine-specific)
+.continue/
+
 # Data (uncomment if you don't want to track db.json)
 backend/data/db.json
 

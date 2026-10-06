@@ -163,6 +163,9 @@
       </ul>
     </div>
   </div>
+
+  <!-- Below the fold, away from check-in / day controls (AdSense accidental-click policy) -->
+  <app-ad-slot *ngIf="showAd" [slot]="adSlot" format="horizontal" [minHeight]="100"></app-ad-slot>
 </div>
 
 <!-- Day Action Modal -->

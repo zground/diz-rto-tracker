@@ -2,7 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const pool    = require('../db');
 const auth    = require('../middleware/auth');
-const { toDateString, calculateRtoStats } = require('../rtoUtils');
+const { toDateString, todayString, calculateRtoStats } = require('../rtoUtils');
 
 /** Zero-pad a number to 2 digits. */
 const pad = n => String(n).padStart(2, '0');
@@ -67,7 +67,7 @@ router.get('/', auth, async (req, res) => {
  */
 router.post('/checkin', auth, async (req, res) => {
   try {
-    const dateStr = req.body.date || toDateString(new Date());
+    const dateStr = req.body.date || todayString();
     const status  = req.body.status || 'IN_OFFICE';
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
